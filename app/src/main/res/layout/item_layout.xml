@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:id="@+id/constraint"
+    android:layout_height="wrap_content">
+
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_english"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="aback"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="20sp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="noun"
+        app:layout_constraintTop_toTopOf="@id/text_english"
+        app:layout_constraintStart_toEndOf="@id/text_english"
+        android:layout_marginStart="20sp"
+        android:textSize="20sp"/>
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/im_favorite"
+        android:layout_width="22sp"
+        android:layout_height="22sp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/not_favorite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_english"
+        app:layout_constraintBottom_toBottomOf="@id/text_english"/>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_transcript"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/text_english"
+        tools:text="/əbæk/"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_uzbek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="ajablanmoq"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="10sp"
+        app:layout_constraintStart_toStartOf="@id/text_transcript"
+        app:layout_constraintTop_toBottomOf="@id/text_transcript"
+        android:textSize="20sp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
