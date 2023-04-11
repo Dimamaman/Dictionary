@@ -1,4 +1,4 @@
-package uz.gita.dimadictionary.presenter.screen.en_uz.adapter
+package uz.gita.dimadictionary.presenter.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,9 +10,24 @@ import uz.gita.dimadictionary.R
 import uz.gita.dimadictionary.data.source.local.entity.DictionaryEntity
 import uz.gita.dimadictionary.databinding.ItemLayoutBinding
 
-class MyAdapter: ListAdapter<DictionaryEntity, MyAdapter.MyViewHolder>(DIFF_CALL_BACK) {
+class MyEnUzAdapter: ListAdapter<DictionaryEntity, MyEnUzAdapter.MyViewHolder>(DIFF_CALL_BACK) {
 
-    class MyViewHolder(private val binding: ItemLayoutBinding): RecyclerView.ViewHolder(binding.root) {
+    private var favoriteClickListener: ((DictionaryEntity) -> Unit)? = null
+    fun setFavoriteClickListener(block: (DictionaryEntity) -> Unit) {
+        favoriteClickListener = block
+    }
+
+    private var speakClickListener: ((String) -> Unit)? = null
+    fun setSpeakClickListener(block: (String) -> Unit) {
+        speakClickListener = block
+    }
+
+    private var copyClickListener: ((DictionaryEntity) -> Unit)? = null
+    fun setCopyClickListener(block: (DictionaryEntity) -> Unit) {
+        copyClickListener = block
+    }
+
+    inner class MyViewHolder(private val binding: ItemLayoutBinding): RecyclerView.ViewHolder(binding.root) {
         private var isExpanded = false
 
         init {
@@ -21,47 +36,52 @@ class MyAdapter: ListAdapter<DictionaryEntity, MyAdapter.MyViewHolder>(DIFF_CALL
                     isExpanded = !isExpanded
                     textTranscript.isVisible = isExpanded
                     textUzbek.isVisible = isExpanded
-
-
-                    /*isExpanded = if (isExpanded) {
-                        textTranscript.visible()
-                        textUzbek.visible()
-                        false
-                    } else {
-                        textTranscript.gone()
-                        textUzbek.gone()
-                        true
-                    }*/
+                    imSound.isVisible = isExpanded
+                    imCopy.isVisible = isExpanded
                 }
             }
         }
 
         fun bind(dictionary: DictionaryEntity) {
             binding.apply {
+                textUzbek.text = dictionary.uzbek
                 textEnglish.text = dictionary.english
                 textType.text = dictionary.type
                 textTranscript.text = dictionary.transcript
-                textUzbek.text = dictionary.uzbek
 
                 if (dictionary.favourite == 1) {
                     imFavorite.setImageResource(R.drawable.favorite)
                 } else {
                     imFavorite.setImageResource(R.drawable.not_favorite)
                 }
-            }
-        }
 
-        companion object {
-            fun create(parent: ViewGroup): MyViewHolder {
-                val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-                return MyViewHolder(binding)
+                imFavorite.setOnClickListener {
+                    if (dictionary.favourite == 0) {
+                        dictionary.favourite = 1
+                        imFavorite.setImageResource(R.drawable.favorite)
+                        favoriteClickListener?.invoke(dictionary)
+                    } else {
+                        imFavorite.setImageResource(R.drawable.not_favorite)
+                        dictionary.favourite = 0
+                        favoriteClickListener?.invoke(dictionary)
+                    }
+                }
+
+                imSound.setOnClickListener {
+                    speakClickListener?.invoke(dictionary.english)
+                }
+
+                imCopy.setOnClickListener {
+                    copyClickListener?.invoke(dictionary)
+                }
             }
         }
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder.create(parent)
+        val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        return MyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

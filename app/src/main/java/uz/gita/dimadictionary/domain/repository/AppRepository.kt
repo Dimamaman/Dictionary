@@ -1,10 +1,15 @@
 package uz.gita.dimadictionary.domain.repository
 
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.flow.Flow
-import uz.gita.dimadictionary.data.model.Dictionary
 import uz.gita.dimadictionary.data.source.local.entity.DictionaryEntity
 
 interface AppRepository {
-    fun getAllWords(): LiveData<List<DictionaryEntity>>
+    suspend fun getAllEnglishWords(): List<DictionaryEntity>
+    suspend fun getAllUzbekWords(): List<DictionaryEntity>
+    fun updateDictionary(dictionary: DictionaryEntity)
+    suspend fun searchEnglishWord(searchEnglishWord: String): List<DictionaryEntity>?
+
+    suspend fun searchUzbekWord(searchEnglishWord: String): List<DictionaryEntity>?
+
+    suspend fun getAllFavourites(): LiveData<List<DictionaryEntity>>
 }

@@ -16,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:endIconMode="clear_text"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -72,6 +73,6 @@
         app:tint="#935555"
         app:borderWidth="0dp"
         android:backgroundTint="#FAF8F0"
-        android:layout_margin="20sp"/>
+        android:layout_margin="20sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

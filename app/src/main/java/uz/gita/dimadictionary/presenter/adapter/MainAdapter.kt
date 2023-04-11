@@ -1,4 +1,4 @@
-package uz.gita.dimadictionary.presenter.screen.main.adapter
+package uz.gita.dimadictionary.presenter.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -12,8 +12,12 @@ class MyAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : Fragme
 
     override fun createFragment(position: Int): Fragment {
         return when(position){
-            0 -> EnUzFragment()
-            else -> UzEnFragment()
+            0 -> {
+                EnUzFragment()
+            }
+            else -> {
+                UzEnFragment()
+            }
         }
     }
 }

@@ -12,5 +12,5 @@ data class DictionaryEntity(
     val transcript: String,
     val uzbek: String,
     val countable: String,
-    val favourite: Int
+    var favourite: Int
 )
