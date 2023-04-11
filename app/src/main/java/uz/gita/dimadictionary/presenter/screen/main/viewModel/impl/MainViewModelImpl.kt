@@ -1,10 +1,17 @@
 package uz.gita.dimadictionary.presenter.screen.main.viewModel.impl
 
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
+import uz.gita.dimadictionary.R
 import uz.gita.dimadictionary.data.source.local.entity.DictionaryEntity
 import uz.gita.dimadictionary.domain.repository.AppRepository
 import uz.gita.dimadictionary.domain.repository.impl.AppRepositoryImpl
@@ -24,7 +31,7 @@ class MainViewModelImpl : ViewModel(), MainViewModel {
 
     override fun searchWord(searchWord: String) {
         viewModelScope.launch {
-            if(pagePosition == 0) {
+            if (pagePosition == 0) {
                 getEnglishWord.value = repository.searchEnglishWord(searchWord)
             } else {
                 getUzbekWord.value = repository.searchUzbekWord(searchWord)
@@ -32,13 +39,21 @@ class MainViewModelImpl : ViewModel(), MainViewModel {
         }
     }
 
-    override fun openFavouriteScreen() { openFavScreen.value = Unit }
+    override fun openFavouriteScreen() {
+        openFavScreen.value = Unit
+    }
 
-    override fun saveCurrentPos(pos: Int) { pagePosition = pos }
+    override fun saveCurrentPos(pos: Int) {
+        pagePosition = pos
+    }
 
-    override suspend fun getAllEnglishWord() { getAllEnglishWord.value = repository.getAllEnglishWords() }
+    override suspend fun getAllEnglishWord() {
+        getAllEnglishWord.value = repository.getAllEnglishWords()
+    }
 
-    override suspend fun getAllUzbekWord() { getAllUzbekWord.value = repository.getAllUzbekWords() }
+    override suspend fun getAllUzbekWord() {
+        getAllUzbekWord.value = repository.getAllUzbekWords()
+    }
 
     override fun updateDictionary(dictionary: DictionaryEntity) { repository.updateDictionary(dictionary) }
 }

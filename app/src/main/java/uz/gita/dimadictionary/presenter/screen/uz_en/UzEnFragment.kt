@@ -1,13 +1,18 @@
 package uz.gita.dimadictionary.presenter.screen.uz_en
 
+import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -43,32 +48,91 @@ class UzEnFragment: Fragment(R.layout.fragment_uz_en),TextToSpeech.OnInitListene
                 DividerItemDecoration.VERTICAL)
         )
 
+        viewModelUzbek.getUzbekWord.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.progress.show()
+            } else {
+                binding.progress.hide()
+            }
+            myAdapter.submitList(it)
+        }
+
+        myAdapter.showDialogClickListener { dictionary ->
+            val dialog = Dialog(requireContext())
+            dialog.setCancelable(true)
+            dialog.setContentView(R.layout.dialog_custom_uz)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            val englishText: AppCompatTextView = dialog.findViewById(R.id.text_english_word_dialog)
+            val transcript: AppCompatTextView =
+                dialog.findViewById(R.id.text_english_transcript_dialog)
+            val uzbek: AppCompatTextView = dialog.findViewById(R.id.text_uzbek_dialog)
+
+            englishText.text = dictionary.english
+            transcript.text = dictionary.transcript
+            uzbek.text = dictionary.uzbek
+
+            val okBtn: AppCompatTextView = dialog.findViewById(R.id.okay_btn_dialog)
+            okBtn.setOnClickListener { dialog.dismiss() }
+
+            val soundBtn: AppCompatImageView = dialog.findViewById(R.id.im_sound_dialog)
+            val copyBtn: AppCompatImageView = dialog.findViewById(R.id.im_copy_dialog)
+            val favouriteBtn: AppCompatImageView = dialog.findViewById(R.id.im_favorite_dialog)
+            if (dictionary.favourite == 0) {
+                favouriteBtn.setImageResource(R.drawable.not_favorite)
+            } else {
+                favouriteBtn.setImageResource(R.drawable.favorite)
+            }
+
+
+            soundBtn.setOnClickListener {
+                speakOut(dictionary.english)
+            }
+
+            copyBtn.setOnClickListener {
+                val clipBoard =
+                    requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(
+                    dictionary.english, "${dictionary.uzbek}\n\n${dictionary.english}\n\n" +
+                            "${dictionary.transcript}\n"
+                )
+                clipBoard.setPrimaryClip(clip)
+                Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
+            }
+
+            favouriteBtn.setOnClickListener {
+                if (dictionary.favourite == 0) {
+                    dictionary.favourite = 1
+                    viewModelUzbek.updateDictionary(dictionary)
+                    favouriteBtn.setImageResource(R.drawable.favorite)
+                } else {
+                    favouriteBtn.setImageResource(R.drawable.not_favorite)
+                    dictionary.favourite = 0
+                    viewModelUzbek.updateDictionary(dictionary)
+                }
+            }
+
+            okBtn.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.create()
+            dialog.show()
+        }
+
         tts = TextToSpeech(requireContext(), this@UzEnFragment)
-
-        myAdapter.setFavoriteClickListener { dictionary ->
-            viewModelUzbek.updateDictionary(dictionary)
-        }
-
-        myAdapter.setSpeakClickListener {
-            speakOut(it)
-        }
 
         lifecycleScope.launch {
             viewModelUzbek.getAllUzbekWord()
         }
 
         viewModelUzbek.getAllUzbekWord.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.progress.show()
+            } else {
+                binding.progress.hide()
+            }
             myAdapter.submitList(it)
-        }
-
-
-        myAdapter.setCopyClickListener {
-            val clipBoard =
-                requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(it.english,"${it.uzbek}\n\n${it.english}\n\n" +
-                    "${it.transcript}\n")
-            clipBoard.setPrimaryClip(clip)
-            Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
+            myAdapter.submitList(it)
         }
     }
 

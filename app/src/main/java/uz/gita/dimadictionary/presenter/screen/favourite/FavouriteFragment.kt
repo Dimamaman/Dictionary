@@ -1,13 +1,18 @@
 package uz.gita.dimadictionary.presenter.screen.favourite
 
+import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -44,23 +49,66 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite), TextToSpeech.On
 
         tts = TextToSpeech(requireContext(), this@FavouriteFragment)
 
-        myAdapter.setFavoriteClickListener {
-            viewModel.updateDictionary(it)
-        }
+        myAdapter.showDialogClickListener { dictionary ->
+            val dialog = Dialog(requireContext())
+            dialog.setCancelable(true)
+            dialog.setContentView(R.layout.dialog_custom_en)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        myAdapter.setSpeakClickListener {
-            speakOut(it)
-        }
+            val englishText: AppCompatTextView = dialog.findViewById(R.id.text_english_word_dialog)
+            val transcript: AppCompatTextView =
+                dialog.findViewById(R.id.text_english_transcript_dialog)
+            val uzbek: AppCompatTextView = dialog.findViewById(R.id.text_uzbek_dialog)
 
-        myAdapter.setCopyClickListener {
-            val clipBoard =
-                requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(
-                it.english, "${it.english}\n\n${it.transcript}\n\n" +
-                        "${it.uzbek}\n"
-            )
-            clipBoard.setPrimaryClip(clip)
-            Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
+            englishText.text = dictionary.english
+            transcript.text = dictionary.transcript
+            uzbek.text = dictionary.uzbek
+
+            val okBtn: AppCompatTextView = dialog.findViewById(R.id.okay_btn_dialog)
+            okBtn.setOnClickListener { dialog.dismiss() }
+
+            val soundBtn: AppCompatImageView = dialog.findViewById(R.id.im_sound_dialog)
+            val copyBtn: AppCompatImageView = dialog.findViewById(R.id.im_copy_dialog)
+            val favouriteBtn: AppCompatImageView = dialog.findViewById(R.id.im_favorite_dialog)
+            if (dictionary.favourite == 0) {
+                favouriteBtn.setImageResource(R.drawable.not_favorite)
+            } else {
+                favouriteBtn.setImageResource(R.drawable.favorite)
+            }
+
+
+            soundBtn.setOnClickListener {
+                speakOut(dictionary.english)
+            }
+
+            copyBtn.setOnClickListener {
+                val clipBoard =
+                    requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(
+                    dictionary.english, "${dictionary.english}\n\n${dictionary.transcript}\n\n" +
+                            "${dictionary.uzbek}\n"
+                )
+                clipBoard.setPrimaryClip(clip)
+                Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
+            }
+
+            favouriteBtn.setOnClickListener {
+                if (dictionary.favourite == 0) {
+                    dictionary.favourite = 1
+                    viewModel.updateDictionary(dictionary)
+                    favouriteBtn.setImageResource(R.drawable.favorite)
+                } else {
+                    favouriteBtn.setImageResource(R.drawable.not_favorite)
+                    dictionary.favourite = 0
+                    viewModel.updateDictionary(dictionary)
+                }
+            }
+
+            okBtn.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.create()
+            dialog.show()
         }
     }
 

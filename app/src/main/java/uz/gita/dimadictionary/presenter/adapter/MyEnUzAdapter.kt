@@ -12,68 +12,21 @@ import uz.gita.dimadictionary.databinding.ItemLayoutBinding
 
 class MyEnUzAdapter: ListAdapter<DictionaryEntity, MyEnUzAdapter.MyViewHolder>(DIFF_CALL_BACK) {
 
-    private var favoriteClickListener: ((DictionaryEntity) -> Unit)? = null
-    fun setFavoriteClickListener(block: (DictionaryEntity) -> Unit) {
-        favoriteClickListener = block
-    }
-
-    private var speakClickListener: ((String) -> Unit)? = null
-    fun setSpeakClickListener(block: (String) -> Unit) {
-        speakClickListener = block
-    }
-
-    private var copyClickListener: ((DictionaryEntity) -> Unit)? = null
-    fun setCopyClickListener(block: (DictionaryEntity) -> Unit) {
-        copyClickListener = block
+    private var showDialogClickListener: ((DictionaryEntity) -> Unit)? = null
+    fun showDialogClickListener(function: (DictionaryEntity) -> Unit) {
+        showDialogClickListener = function
     }
 
     inner class MyViewHolder(private val binding: ItemLayoutBinding): RecyclerView.ViewHolder(binding.root) {
-        private var isExpanded = false
-
-        init {
-            binding.apply {
-                constraint.setOnClickListener {
-                    isExpanded = !isExpanded
-                    textTranscript.isVisible = isExpanded
-                    textUzbek.isVisible = isExpanded
-                    imSound.isVisible = isExpanded
-                    imCopy.isVisible = isExpanded
-                }
-            }
-        }
 
         fun bind(dictionary: DictionaryEntity) {
             binding.apply {
-                textUzbek.text = dictionary.uzbek
                 textEnglish.text = dictionary.english
                 textType.text = dictionary.type
-                textTranscript.text = dictionary.transcript
+            }
 
-                if (dictionary.favourite == 1) {
-                    imFavorite.setImageResource(R.drawable.favorite)
-                } else {
-                    imFavorite.setImageResource(R.drawable.not_favorite)
-                }
-
-                imFavorite.setOnClickListener {
-                    if (dictionary.favourite == 0) {
-                        dictionary.favourite = 1
-                        imFavorite.setImageResource(R.drawable.favorite)
-                        favoriteClickListener?.invoke(dictionary)
-                    } else {
-                        imFavorite.setImageResource(R.drawable.not_favorite)
-                        dictionary.favourite = 0
-                        favoriteClickListener?.invoke(dictionary)
-                    }
-                }
-
-                imSound.setOnClickListener {
-                    speakClickListener?.invoke(dictionary.english)
-                }
-
-                imCopy.setOnClickListener {
-                    copyClickListener?.invoke(dictionary)
-                }
+            binding.constraint.setOnClickListener {
+                showDialogClickListener?.invoke(dictionary)
             }
         }
     }

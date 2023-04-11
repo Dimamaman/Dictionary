@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import uz.gita.dimadictionary.R
+import uz.gita.dimadictionary.databinding.FragmentMain2Binding
 import uz.gita.dimadictionary.databinding.FragmentMainBinding
 import uz.gita.dimadictionary.presenter.adapter.MyAdapter
 import uz.gita.dimadictionary.presenter.screen.activity.MainActivity
@@ -20,8 +21,8 @@ import uz.gita.dimadictionary.presenter.screen.main.viewModel.MainViewModel
 import uz.gita.dimadictionary.presenter.screen.main.viewModel.impl.MainViewModelImpl
 import uz.gita.dimadictionary.util.myApply
 
-class MainFragment : Fragment(R.layout.fragment_main) {
-    private val binding by viewBinding(FragmentMainBinding::bind)
+class MainFragment : Fragment(R.layout.fragment_main2) {
+    private val binding by viewBinding(FragmentMain2Binding::bind)
     var tabTitle = arrayOf("Eng-Uzb", "Uzb-Eng")
     private val viewModel by activityViewModels<MainViewModelImpl>()
 

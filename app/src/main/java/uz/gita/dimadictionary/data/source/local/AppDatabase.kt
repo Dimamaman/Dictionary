@@ -22,7 +22,6 @@ abstract class AppDatabase : RoomDatabase() {
                     "Dictionary.db"
                 )
                     .createFromAsset("Dictionary.db")
-                    .allowMainThreadQueries()
                     .build()
             }
         }
