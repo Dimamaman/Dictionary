@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.launch
@@ -96,11 +97,13 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite), TextToSpeech.On
                 if (dictionary.favourite == 0) {
                     dictionary.favourite = 1
                     viewModel.updateDictionary(dictionary)
+                    dialog.dismiss()
                     favouriteBtn.setImageResource(R.drawable.favorite)
                 } else {
                     favouriteBtn.setImageResource(R.drawable.not_favorite)
                     dictionary.favourite = 0
                     viewModel.updateDictionary(dictionary)
+                    dialog.dismiss()
                 }
             }
 
@@ -109,6 +112,10 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite), TextToSpeech.On
             }
             dialog.create()
             dialog.show()
+        }
+
+        binding.back.setOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
