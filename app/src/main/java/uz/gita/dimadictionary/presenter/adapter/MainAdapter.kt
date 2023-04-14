@@ -4,19 +4,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import uz.gita.dimadictionary.presenter.screen.en_uz.EnUzFragment
-import uz.gita.dimadictionary.presenter.screen.uz_en.UzEnFragment
 
-class MyAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
+class MyAdapter(
+    fragmentManager: FragmentManager,
+    lifecycle: Lifecycle,
+    private val enUzPage: uz.gita.dimadictionary.presenter.page.en_uz.EnUzFragment,
+    private val uzEnPage: uz.gita.dimadictionary.presenter.page.uz_en.UzEnFragment
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
         return when(position){
             0 -> {
-                EnUzFragment()
+                enUzPage
             }
             else -> {
-                UzEnFragment()
+                uzEnPage
             }
         }
     }

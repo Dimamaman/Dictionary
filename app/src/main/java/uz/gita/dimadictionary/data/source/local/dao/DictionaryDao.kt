@@ -1,5 +1,6 @@
 package uz.gita.dimadictionary.data.source.local.dao
 
+import android.database.Cursor
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -10,22 +11,22 @@ import uz.gita.dimadictionary.data.source.local.entity.DictionaryEntity
 @Dao
 interface DictionaryDao {
     @Query("SELECT * FROM dictionary")
-    suspend fun getAllEnglishWords(): List<DictionaryEntity>
+    fun getAllEnglishWords(): Cursor
 
     @Insert
     fun insert(dictionaryEntity: DictionaryEntity)
 
     @Query("SELECT * FROM dictionary ORDER BY uzbek GLOB '[A-Za-z]*' DESC, uzbek")
-    suspend fun getAllUzbekWords(): List<DictionaryEntity>
+    fun getAllUzbekWords(): Cursor
 
     @Update
     fun updateDictionary(dictionary: DictionaryEntity)
     @Query("SELECT * FROM dictionary WHERE english LIKE '%' || :searchEnglish || '%'")
-    suspend fun searchEnglishWord(searchEnglish: String): List<DictionaryEntity>?
+    fun searchEnglishWord(searchEnglish: String): Cursor
 
     @Query("SELECT * FROM dictionary WHERE uzbek LIKE '%' || :searchEnglish || '%'")
-    suspend fun searchUzbekWord(searchEnglish: String): List<DictionaryEntity>?
+    fun searchUzbekWord(searchEnglish: String): Cursor
 
     @Query("SELECT * FROM dictionary WHERE favourite = 1")
-    fun getAllFavourites(): LiveData<List<DictionaryEntity>>
+    fun getAllFavourites(): Cursor
 }

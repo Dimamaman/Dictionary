@@ -1,4 +1,4 @@
-package uz.gita.dimadictionary.presenter.screen.en_uz
+package uz.gita.dimadictionary.presenter.page.en_uz
 
 import android.app.Dialog
 import android.content.ClipData
@@ -14,36 +14,29 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import uz.gita.dimadictionary.R
-import uz.gita.dimadictionary.data.source.local.entity.DictionaryEntity
 import uz.gita.dimadictionary.databinding.FragmentEnUzBinding
 import uz.gita.dimadictionary.presenter.adapter.MyEnUzAdapter
-import uz.gita.dimadictionary.presenter.screen.main.viewModel.MainViewModel
-import uz.gita.dimadictionary.presenter.screen.main.viewModel.impl.MainViewModelImpl
+import uz.gita.dimadictionary.presenter.page.en_uz.viewmodel.EnUzRepository
+import uz.gita.dimadictionary.presenter.page.en_uz.viewmodel.impl.EnUzRepositoryImpl
 import java.util.*
 
 class EnUzFragment : Fragment(R.layout.fragment_en_uz), TextToSpeech.OnInitListener {
     private val binding by viewBinding(FragmentEnUzBinding::bind)
-    private val viewModelEnglish: MainViewModel by activityViewModels<MainViewModelImpl>()
-
+    private val viewModelEnglish: EnUzRepository by viewModels<EnUzRepositoryImpl>()
+    private var currentQuery: String = ""
     private val myAdapter: MyEnUzAdapter by lazy { MyEnUzAdapter() }
     private var tts: TextToSpeech? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
 
         viewModelEnglish.getEnglishWord.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
-                binding.progress.show()
-            } else {
-                binding.progress.hide()
-            }
-            myAdapter.submitList(it)
+            myAdapter.submitCursor(it)
         }
 
         myAdapter.showDialogClickListener { dictionary ->
@@ -67,12 +60,12 @@ class EnUzFragment : Fragment(R.layout.fragment_en_uz), TextToSpeech.OnInitListe
             val soundBtn: AppCompatImageView = dialog.findViewById(R.id.im_sound_dialog)
             val copyBtn: AppCompatImageView = dialog.findViewById(R.id.im_copy_dialog)
             val favouriteBtn: AppCompatImageView = dialog.findViewById(R.id.im_favorite_dialog)
+
             if (dictionary.favourite == 0) {
                 favouriteBtn.setImageResource(R.drawable.not_favorite)
             } else {
                 favouriteBtn.setImageResource(R.drawable.favorite)
             }
-
 
             soundBtn.setOnClickListener {
                 speakOut(dictionary.english)
@@ -86,7 +79,6 @@ class EnUzFragment : Fragment(R.layout.fragment_en_uz), TextToSpeech.OnInitListe
                             "${dictionary.uzbek}\n"
                 )
                 clipBoard.setPrimaryClip(clip)
-                Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
             }
 
             favouriteBtn.setOnClickListener {
@@ -117,12 +109,11 @@ class EnUzFragment : Fragment(R.layout.fragment_en_uz), TextToSpeech.OnInitListe
         }
 
         viewModelEnglish.getAllEnglishWord.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
-                binding.progress.show()
-            } else {
-                binding.progress.hide()
-            }
-            myAdapter.submitList(it)
+            myAdapter.submitCursor(it)
+        }
+
+        viewModelEnglish.updateCursorLiveData.observe(viewLifecycleOwner) {
+            searchQuery(currentQuery)
         }
     }
 
@@ -152,8 +143,12 @@ class EnUzFragment : Fragment(R.layout.fragment_en_uz), TextToSpeech.OnInitListe
         tts!!.speak(englishWord, TextToSpeech.QUEUE_FLUSH, null, "")
     }
 
-    private val observer = androidx.lifecycle.Observer<List<DictionaryEntity>> {
-        Toast.makeText(requireContext(), it.size, Toast.LENGTH_SHORT).show()
-        myAdapter.submitList(it)
+    fun searchQuery(query: String) {
+        currentQuery = query
+        if(query.isEmpty()) {
+            viewModelEnglish.getAllEnglishWord()
+            binding.textNotFound.visibility = View.GONE
+        }
+        else viewModelEnglish.searchWord(query)
     }
 }

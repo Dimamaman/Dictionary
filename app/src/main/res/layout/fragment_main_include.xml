@@ -18,16 +18,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/favorite"
-        app:tint="#935555"
-        app:borderWidth="0dp"
-        android:backgroundTint="#FAF8F0"
-        android:layout_margin="20sp" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

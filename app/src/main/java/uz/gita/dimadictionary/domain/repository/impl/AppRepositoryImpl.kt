@@ -1,5 +1,6 @@
 package uz.gita.dimadictionary.domain.repository.impl
 
+import android.database.Cursor
 import androidx.lifecycle.LiveData
 import uz.gita.dimadictionary.data.source.local.AppDatabase
 import uz.gita.dimadictionary.data.source.local.entity.DictionaryEntity
@@ -8,11 +9,22 @@ import uz.gita.dimadictionary.domain.repository.AppRepository
 class AppRepositoryImpl: AppRepository {
     private val database = AppDatabase.getInstance()
 
-    override suspend fun getAllEnglishWords(): List<DictionaryEntity> {
+    companion object {
+        private lateinit var instance: AppRepository
+        fun getInstance(): AppRepository {
+            if(!(::instance.isInitialized)){
+                instance = AppRepositoryImpl()
+            }
+
+            return instance
+        }
+    }
+
+    override fun getAllEnglishWords(): Cursor {
         return database.getDao().getAllEnglishWords()
     }
 
-    override suspend fun getAllUzbekWords(): List<DictionaryEntity> {
+    override fun getAllUzbekWords(): Cursor {
         return database.getDao().getAllUzbekWords()
     }
 
@@ -20,15 +32,15 @@ class AppRepositoryImpl: AppRepository {
         database.getDao().updateDictionary(dictionary)
     }
 
-    override suspend fun searchEnglishWord(searchEnglishWord: String): List<DictionaryEntity>? {
+    override fun searchEnglishWord(searchEnglishWord: String): Cursor {
         return database.getDao().searchEnglishWord(searchEnglishWord)
     }
 
-    override suspend fun searchUzbekWord(searchEnglishWord: String): List<DictionaryEntity>? {
+    override fun searchUzbekWord(searchEnglishWord: String): Cursor {
         return database.getDao().searchUzbekWord(searchEnglishWord)
     }
 
-    override suspend fun getAllFavourites(): LiveData<List<DictionaryEntity>> {
+    override fun getAllFavourites(): Cursor {
         return database.getDao().getAllFavourites()
     }
 }

@@ -2,4 +2,6 @@
     <string name="app_name">Dictionay</string>
     <string name="label">Search...</string>
     <string name="favourites">Favourites</string>
+    <string name="not_found">Word Not Found</string>
+    <string name="soz_topilmadi">So\'z topilmadi</string>
 </resources>

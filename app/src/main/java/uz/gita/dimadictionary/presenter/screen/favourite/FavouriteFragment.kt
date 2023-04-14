@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.database.Cursor
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,7 +16,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -44,8 +44,11 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite), TextToSpeech.On
             )
         )
 
+        viewModel.getAllFavourites.observe(viewLifecycleOwner, observer)
+
+
         lifecycleScope.launch {
-            viewModel.getAllFavourites().observe(viewLifecycleOwner, observer)
+            viewModel.getAllFavourites()
         }
 
         tts = TextToSpeech(requireContext(), this@FavouriteFragment)
@@ -90,15 +93,14 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite), TextToSpeech.On
                             "${dictionary.uzbek}\n"
                 )
                 clipBoard.setPrimaryClip(clip)
-                Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
             }
 
             favouriteBtn.setOnClickListener {
                 if (dictionary.favourite == 0) {
                     dictionary.favourite = 1
                     viewModel.updateDictionary(dictionary)
-                    dialog.dismiss()
                     favouriteBtn.setImageResource(R.drawable.favorite)
+                    dialog.dismiss()
                 } else {
                     favouriteBtn.setImageResource(R.drawable.not_favorite)
                     dictionary.favourite = 0
@@ -119,8 +121,11 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite), TextToSpeech.On
         }
     }
 
-    private val observer = Observer<List<DictionaryEntity>> {
-        myAdapter.submitList(it)
+    private val observer = androidx.lifecycle.Observer<Cursor> {
+        if (it.count == 0) {
+
+        }
+        myAdapter.submitCursor(it)
     }
 
     private fun speakOut(englishWord: String) {

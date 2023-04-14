@@ -1,15 +1,15 @@
 package uz.gita.dimadictionary.domain.repository
 
+import android.database.Cursor
 import androidx.lifecycle.LiveData
 import uz.gita.dimadictionary.data.source.local.entity.DictionaryEntity
 
 interface AppRepository {
-    suspend fun getAllEnglishWords(): List<DictionaryEntity>
-    suspend fun getAllUzbekWords(): List<DictionaryEntity>
+    fun getAllEnglishWords(): Cursor
+    fun getAllUzbekWords(): Cursor
     fun updateDictionary(dictionary: DictionaryEntity)
-    suspend fun searchEnglishWord(searchEnglishWord: String): List<DictionaryEntity>?
+    fun searchEnglishWord(searchEnglishWord: String): Cursor
+    fun searchUzbekWord(searchEnglishWord: String): Cursor
 
-    suspend fun searchUzbekWord(searchEnglishWord: String): List<DictionaryEntity>?
-
-    suspend fun getAllFavourites(): LiveData<List<DictionaryEntity>>
+    fun getAllFavourites(): Cursor
 }
